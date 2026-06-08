@@ -267,6 +267,16 @@ init-repro: session
 	$(RUN_IN_REPRO) exit
 endif
 
+ifndef IN_RUNNING_REPRO
+## run-in-repro:      Run CMD in a non-interactive REPRO session.
+run-in-repro: DOCKER_TTY_FLAGS=
+run-in-repro: session
+	$(REPRO_RUN_COMMAND) bash -lc '$(CMD)'
+else
+run-in-repro:
+	$(TARGET_NOT_SUPPORTED_IN_RUNNING_REPRO)
+endif
+
 reset-repro: session
 	$(shell $(OS_APPEND_ENV) REPRO_DEFER_INIT=true)
 	$(RUN_IN_REPRO) repro.reset_repro
