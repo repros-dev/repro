@@ -219,8 +219,15 @@ else
 	@:
 endif
 
+# allocate a TTY only for interactive sessions
+ifeq ($(REPRO_INTERACTIVE_SESSION),false)
+DOCKER_TTY_FLAGS =
+else
+DOCKER_TTY_FLAGS = -it
+endif
+
 # define command for running the REPRO Docker image
-REPRO_RUN_COMMAND=$(QUIET)docker run -it --rm $(REPRO_DOCKER_OPTIONS)   \
+REPRO_RUN_COMMAND=$(QUIET)docker run $(DOCKER_TTY_FLAGS) --rm $(REPRO_DOCKER_OPTIONS)   \
                              --volume "$(CURDIR)":"$(REPRO_MNT)"       	\
 							 --env-file=${SESSION_ENV_FILE}						\
 							 $(REPRO_SETTINGS)							\
@@ -232,7 +239,7 @@ REPRO_RUN_COMMAND=$(QUIET)docker run -it --rm $(REPRO_DOCKER_OPTIONS)   \
 ifdef IN_RUNNING_REPRO
 RUN_IN_REPRO=$(QUIET)bash -ic
 else
-RUN_IN_REPRO=$(REPRO_RUN_COMMAND) bash -ilc
+RUN_IN_REPRO=$(REPRO_RUN_COMMAND) bash -lc
 endif
 
 ## 

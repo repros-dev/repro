@@ -15,6 +15,7 @@ function logging_prefix {
 
 # schedule one-time customizations of REPRO user environment at REPRO start
 repro.atstart source ${REPRO_ENV_FILE}
+repro.atstart source ${REPRO_BASE_FUNCTIONS}
 repro.atstart repro.initialize_session
 repro.atstart export 'IN_RUNNING_REPRO=${REPRO_NAME}'
 repro.atstart 'cd ${REPRO_MNT}'
