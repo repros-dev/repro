@@ -9,7 +9,7 @@ ENV CIRSS_RELEASE 'https://github.com/cirss/${1}/releases/download/v${2}/'
 # define URLs of REPRO distributions
 ENV REPRO_DIST_MASTER 'https://raw.githubusercontent.com/repros-dev/repro/master/exports'
 ENV REPRO_DIST_v0_1_0 'https://raw.githubusercontent.com/repros-dev/repro/v0.1.0/exports'
-ENV REPRO_DIST ${REPRO_DIST_v0_1_0}
+ENV REPRO_DIST ${REPRO_DIST_MASTER}
 
 # preinstall packages needed to build any REPRO
 RUN apt-get -y update && \
