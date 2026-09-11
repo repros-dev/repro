@@ -291,6 +291,7 @@ function repro.run_target { $_REPRO_TRACE_CALL_ $*
     readarray targets_file_lines < ${REPRO_TARGETS_FILE}
 
     target_invoked=false
+    target_status=0
     for target_entry in "${targets_file_lines[@]}" ; do
         read -ra tokens <<< ${target_entry}
         $_REPRO_TRACE_ "Processing line in target file: '${tokens[@]}'"
@@ -298,7 +299,13 @@ function repro.run_target { $_REPRO_TRACE_CALL_ $*
             IFS='.' read module_name profile module_target <<< ${tokens[1]}
             $_REPRO_INFO_ "Invoking the '${module_name}:${profile}:${module_target}' target"
             $_REPRO_DEBUG_EVAL_ make ${REPRO_MAKE_VERBOSITY} -C ${REPRO_MNT}/.${module_name} -f ${profile}-makefile ${module_target}
+            make_status=$?
             target_invoked=true
+
+            # remember the first failure so the caller sees it after every implementation has run
+            if [[ ${target_status} == 0 ]] ; then
+                target_status=${make_status}
+            fi
 
             if [[ ${requested_target} == "start-services" ]] ; then
                 repro.announce_services
@@ -307,7 +314,7 @@ function repro.run_target { $_REPRO_TRACE_CALL_ $*
     done
 
     if ${target_invoked} ; then
-        $_REPRO_DEBUG_TRACE_RETURN_ "Done invoking implementations of the '${requested_target}' REPRO target"; return
+        $_REPRO_DEBUG_TRACE_RETURN_ "Done invoking implementations of the '${requested_target}' REPRO target"; return ${target_status}
     else
         $_REPRO_INFO_TRACE_RETURN_ "No implementations of the '${requested_target}' REPRO target were found" ; return ${error_code}
     fi
