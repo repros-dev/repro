@@ -91,6 +91,9 @@ function install_profile {
             esac
 
 
+            # create the directory a three-token line places its artifact in
+            mkdir -p $(dirname ${artifact_base})
+
             if [[ ${artifact_path} == http?:* ]] ; then
                 curl -f -L ${artifact_path} -o ${artifact_base}
             elif [[ $module_version == exports ]] ; then
